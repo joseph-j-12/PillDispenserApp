@@ -1,6 +1,7 @@
 package com.jjthedev.pilly;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,13 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     UserViewAdapter adapter;
     List<UserDisplay> userList = new ArrayList<>();
+    boolean firstlaunch = false;
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        fetchUserList();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new UserViewAdapter(this, userList);
         userlistview.setAdapter(adapter);
 
+        fetchUserList();
         refButton.setOnClickListener(v->fetchUserList());
 
     }
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Map<Integer, String>> call, Throwable t) {
                 Toast.makeText(MainActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("usrdata","Failed: " + t.getMessage());
             }
         });
 

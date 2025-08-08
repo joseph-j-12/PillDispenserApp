@@ -21,7 +21,7 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
     }
     public static class PillViewHolder extends RecyclerView.ViewHolder{
         TextView nametxt;
-        TextView idtxt;
+        //TextView idtxt;
         Button delButton;
         Button addTimeButton;
         RecyclerView timings;
@@ -45,6 +45,9 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
     public void onBindViewHolder(PillViewAdapter.PillViewHolder holder, int position) {
         Pill pill = pills.get(position);
         holder.nametxt.setText(pill.name);
+
+
+
         //holder.idtxt.setText("ID: " + user.id);
 
 //        holder.itemView.setOnClickListener(v -> {
@@ -53,7 +56,8 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
 //            context.startActivity(intent);
 //        });
         holder.delButton.setOnClickListener(v -> {
-
+            pills.remove(position);
+            this.notifyDataSetChanged();
         });
     }
 

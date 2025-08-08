@@ -5,6 +5,7 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
@@ -19,4 +20,10 @@ public interface UserAPI {
 
     @PUT("users/{id}")
     Call<Void> updateUser(@Path("id") String id, @Body User user); // Updates user data
+
+    @DELETE("users/{id}")
+    Call<Void> deleteUser(@Path("id") String id);
+
+    //@PUT("adduser")
+    //Call<Void> newUser()
 }
