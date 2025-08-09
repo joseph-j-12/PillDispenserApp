@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="dosages">
+    <item>select dosage</item>
+    <item>1/2</item>
+    <item>1</item>
+    <item>1 + 1/2</item>
+    <item>2</item>
+    <item>2 + 1/2</item>
+    <item>3</item>
+    <item>2.5ml</item>
+    <item>5ml</item>
+    <item>7.5ml</item>
+    <item>10ml</item>
+</string-array>
+</resources>

@@ -30,16 +30,30 @@
             android:layout_height="78dp"
             android:orientation="horizontal" />
 
-        <Button
-            android:id="@+id/addTime"
-            android:layout_width="65dp"
-            android:layout_height="wrap_content"
-            android:text="+" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="100"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/addTime"
+                android:layout_width="65dp"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
+            <Spinner
+                android:id="@+id/dosage_select_spinner"
+                android:layout_width="279dp"
+                android:layout_height="wrap_content"
+                android:entries="@array/dosages"/>
+        </LinearLayout>
 
         <Button
-            android:id="@+id/delete_time"
+            android:id="@+id/delete_pill"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Delete" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

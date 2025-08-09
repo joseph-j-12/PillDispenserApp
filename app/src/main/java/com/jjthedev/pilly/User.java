@@ -9,5 +9,6 @@ public class User {
     public String name;
     //public ArrayList<Pill> pills = new ArrayList<Pill>();
 
-    public Map<String, List<Integer>> pill;
+    public Map<String, List<List<Integer>>> pill;
+
 }
