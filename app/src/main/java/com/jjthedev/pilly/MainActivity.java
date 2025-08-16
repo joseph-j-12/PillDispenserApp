@@ -62,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView userlistview = findViewById(R.id.recycler_userlist);
 
         userlistview.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new UserViewAdapter(this, userList);
+        adapter = new UserViewAdapter(this, userList, position -> {
+            userList.remove(position);
+            adapter.notifyDataSetChanged();
+        });
         userlistview.setAdapter(adapter);
 
         fetchUserList();

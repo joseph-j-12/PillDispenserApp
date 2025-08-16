@@ -9,4 +9,6 @@ public class Pill {
 
     public List<Integer> timings;
 
+    public int containerid;
+
 }

@@ -1,10 +1,12 @@
 package com.jjthedev.pilly;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -22,10 +24,11 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
     public static class PillViewHolder extends RecyclerView.ViewHolder{
         TextView nametxt;
         //TextView idtxt;
-        Button delButton;
-        Button addTimeButton;
+        ImageButton delButton;
+        ImageButton addTimeButton;
         RecyclerView timings;
 
+        ImageButton editPill;
         String[] dosages;
         Spinner dosage_spinner;
         public PillViewHolder(View view)
@@ -37,7 +40,8 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
             addTimeButton = view.findViewById(R.id.addTime);
             //idtxt = view.findViewById(R.id.idText);
             dosages = view.getResources().getStringArray(R.array.dosages);
-            dosage_spinner = view.findViewById(R.id.dosage_select_spinner);
+            //dosage_spinner = view.findViewById(R.id.dosage_select_spinner);
+
         }
     }
 
@@ -55,6 +59,7 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
             pills.remove(position);
             this.notifyDataSetChanged();
         });
+
         holder.addTimeButton.setOnClickListener(v->{
 
         });

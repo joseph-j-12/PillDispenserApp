@@ -2,11 +2,13 @@ package com.jjthedev.pilly;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,9 +49,9 @@ public class UserPageActivity extends AppCompatActivity {
     TextView userid_txtview;
 
     Button deleteUser;
-    Button saveUser, canceledit;
+    ImageButton saveUser, canceledit;
     User userdata;
-    Button newPill;
+    ImageButton newPill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,7 @@ public class UserPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
         Log.d("UserData", userId);
+        Log.d("UserData", "1AAAAAAAAAAAAAAA");
         setContentView(R.layout.activity_user_page);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -66,16 +69,16 @@ public class UserPageActivity extends AppCompatActivity {
             return insets;
         });
 
-        username_txtview = findViewById(R.id.userpage_username);
-        userid_txtview = findViewById(R.id.userpage_userid);
+        username_txtview = findViewById(R.id.userpaage_username);
+        //userid_txtview = findViewById(R.id.userpage_userid);
 
-        canceledit = findViewById(R.id.userpage_back);
-        deleteUser = findViewById(R.id.userpage_delete);
+        canceledit = findViewById(R.id.userpage_cancel);
         saveUser = findViewById(R.id.userpage_save);
         newPill = findViewById(R.id.userpage_newpill);
-        if (userid_txtview == null)
+        Log.d("UserData", "2AAAAAAAAAAAAAAA");
+        if (saveUser == null)
         {
-            Log.d("UserData", "null userid");
+            Log.d("UserData", "NULLLLLL!!!!!!");
         }
         fetchUserData(userId);
 
@@ -86,31 +89,6 @@ public class UserPageActivity extends AppCompatActivity {
         pill_list.setAdapter(pilladapter);
         canceledit.setOnClickListener(v->{
             finish();
-        });
-        deleteUser.setOnClickListener(v->{
-            UserAPI api = RetrofitClient.getUserAPI();
-
-            Call<Void> call = api.deleteUser(userId);  // userId is a String or int
-
-            call.enqueue(new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        Log.d("UserAPI", "User deleted successfully");
-                        // You can finish activity or refresh UI
-                    } else {
-                        Log.e("UserAPI", "Delete failed with code: " + response.code());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    Log.e("UserAPI", "Delete failed: " + t.getMessage());
-                }
-            });
-
-            finish();
-
         });
 
         saveUser.setOnClickListener(v->{
@@ -128,6 +106,7 @@ public class UserPageActivity extends AppCompatActivity {
                 }
                 vals.add(pill_display.get(i).count);
                 vals.add(pill_display.get(i).dosage);
+                vals.add(pill_display.get(i).containerid);
                 pilldata.add(vals);
                 pilldata.add(timings);
 
@@ -156,46 +135,48 @@ public class UserPageActivity extends AppCompatActivity {
                 }
             }));
         });
-
         newPill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                View view1 = LayoutInflater.from(UserPageActivity.this).inflate(R.layout.newpill_dialog,null);
-                TextInputEditText nameinp = view1.findViewById(R.id.pillname_input);
-                AlertDialog al1 = new MaterialAlertDialogBuilder(UserPageActivity.this)
-                        .setTitle("Enter new Pill Name")
-                        .setView(view1)
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                String name = nameinp.getText().toString();
-                                Log.d("dialog", name);
-
-                                Pill p = new Pill();
-                                p.name = name;
-                                List<Integer> vals = Arrays.asList(0,0);
-                                List<Integer> timings = new ArrayList<>();
-                                p.timings = timings;
-                                p.count = vals.get(0);
-                                p.dosage = vals.get(1);
-                                pill_display.add(p);
-
-                                pilladapter.notifyDataSetChanged();
-                                dialog.dismiss();
-                            }
-                        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).create();
-                al1.show();
+                newPill(view);
             }
         });
 
-
     }
 
+    void newPill(View view)
+    {
+        View view1 = LayoutInflater.from(UserPageActivity.this).inflate(R.layout.newpill_dialog,null);
+        TextInputEditText nameinp = view1.findViewById(R.id.pillname_input);
+        AlertDialog al1 = new MaterialAlertDialogBuilder(UserPageActivity.this)
+                .setTitle("Enter new Pill Name")
+                .setView(view1)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = nameinp.getText().toString();
+                        Log.d("dialog", name);
+
+                        Pill p = new Pill();
+                        p.name = name;
+                        List<Integer> vals = Arrays.asList(0,0);
+                        List<Integer> timings = new ArrayList<>();
+                        p.timings = timings;
+                        p.count = vals.get(0);
+                        p.dosage = vals.get(1);
+                        pill_display.add(p);
+
+                        pilladapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        al1.show();
+    }
     void fetchUserData(String id)
     {
         UserAPI api = RetrofitClient.getUserAPI();
@@ -210,7 +191,7 @@ public class UserPageActivity extends AppCompatActivity {
                     Log.d("UserData", "ID: " + user.id + ", Name: " + user.name);
 
                     username_txtview.setText(user.name);
-                    userid_txtview.setText(user.id.toString());
+                    //userid_txtview.setText(user.id.toString());
 
 
                     for (Map.Entry<String, List<List<Integer>>> entry : user.pill.entrySet()) {
@@ -222,6 +203,7 @@ public class UserPageActivity extends AppCompatActivity {
                         p.timings = timings;
                         p.count = vals.get(0);
                         p.dosage = vals.get(1);
+                        p.containerid = vals.get(2);
                         pill_display.add(p);
                     }
                     pilladapter.notifyDataSetChanged();

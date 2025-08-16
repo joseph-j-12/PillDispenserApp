@@ -5,79 +5,85 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UserPageActivity">
+    tools:context=".UserPageActivity"
+    android:background="@drawable/backround_userpage">
 
-    <TextView
-        android:id="@+id/userpage_username"
-        android:layout_width="147sp"
-        android:layout_height="23sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userpage_save" />
 
-    <TextView
-        android:id="@+id/userpage_userid"
-        android:layout_width="147sp"
-        android:layout_height="20sp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12sp"
-        android:text="TextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userpage_username" />
-
-    <Button
+    <ImageButton
         android:id="@+id/userpage_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16sp"
-        android:layout_marginTop="16sp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/saveuser"
         android:text="Save"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/userpage_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="124dp"
-        android:layout_marginTop="16sp"
-        android:text="Cancel"
-        app:layout_constraintStart_toStartOf="parent"
+    <ImageButton
+        android:id="@+id/userpage_cancel"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/cancel"
+        android:text="Save"
+        app:layout_constraintStart_toEndOf="@+id/userpage_save"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/userpage_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
+    <ImageButton
+        android:id="@+id/userpage_newpill"
+        android:layout_width="106dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:textColor="#FF5511"
-        android:text="Delete user"
+        android:background="@drawable/newpill"
+        android:text="New Pill"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/userpage_newpill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16sp"
-        android:layout_marginBottom="12dp"
-        android:text="New Pill"
-        app:layout_constraintBottom_toTopOf="@+id/pill_list"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <ImageButton
+        android:id="@+id/camera"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/camera"
+        app:layout_constraintEnd_toStartOf="@+id/userpage_newpill"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/userpage_cancel"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/recycler_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/userlistarea"
+        android:clipToOutline="true"
+        app:layout_constraintTop_toBottomOf="@+id/userpage_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pill_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userpage_userid" /><![CDATA[
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="20dp"  />
+    </FrameLayout>
 
-    />
-]]>
+    <TextView
+        android:id="@+id/userpaage_username"
+        android:layout_width="182dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
