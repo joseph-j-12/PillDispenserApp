@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +53,7 @@ public class UserPageActivity extends AppCompatActivity {
     ImageButton saveUser, canceledit;
     User userdata;
     ImageButton newPill;
-
+    List<Integer> empty_containers = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,48 +93,7 @@ public class UserPageActivity extends AppCompatActivity {
         });
 
         saveUser.setOnClickListener(v->{
-            Map<String, List<List<Integer>>> pill = new HashMap<>();;
-            for (int i = 0; i < pill_display.size(); i++)
-            {
-
-                List<Integer> vals = new ArrayList<>();
-                List<Integer> timings = new ArrayList<>();
-                List<List<Integer>> pilldata = new ArrayList<>();
-                for(int j = 0; j < pill_display.get(i).timings.size(); j++)
-                {
-                    Log.e("usrdata", "test");
-                    timings.add(pill_display.get(i).timings.get(j));
-                }
-                vals.add(pill_display.get(i).count);
-                vals.add(pill_display.get(i).dosage);
-                vals.add(pill_display.get(i).containerid);
-                pilldata.add(vals);
-                pilldata.add(timings);
-
-                pill.put(pill_display.get(i).name, pilldata);
-            }
-            userdata.pill = pill;
-
-            UserAPI api = RetrofitClient.getUserAPI();
-            api.updateUser(userdata.id.toString(), userdata).enqueue((new Callback<Void>() {
-                @Override
-                public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (response.isSuccessful()) {
-                        // Update successful
-                        Toast.makeText(UserPageActivity.this, "User updated successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        // Server returned an error
-                        Toast.makeText(UserPageActivity.this, "Update failed: " + response.code(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Void> call, Throwable t) {
-                    // Network or conversion error
-                    Toast.makeText(UserPageActivity.this, "Request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }));
+            update_user();
         });
         newPill.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -144,10 +104,59 @@ public class UserPageActivity extends AppCompatActivity {
 
     }
 
+    void update_user()
+    {
+        Map<String, List<List<Integer>>> pill = new HashMap<>();;
+        for (int i = 0; i < pill_display.size(); i++)
+        {
+
+            List<Integer> vals = new ArrayList<>();
+            List<Integer> timings = new ArrayList<>();
+            List<List<Integer>> pilldata = new ArrayList<>();
+            for(int j = 0; j < pill_display.get(i).timings.size(); j++)
+            {
+                Log.e("usrdata", "test");
+                timings.add(pill_display.get(i).timings.get(j));
+            }
+            vals.add(pill_display.get(i).count);
+            vals.add(pill_display.get(i).dosage);
+            vals.add(pill_display.get(i).containerid);
+            pilldata.add(vals);
+            pilldata.add(timings);
+
+            pill.put(pill_display.get(i).name, pilldata);
+        }
+        userdata.pill = pill;
+
+        UserAPI api = RetrofitClient.getUserAPI();
+        api.updateUser(userdata.id.toString(), userdata).enqueue((new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Update successful
+                    Toast.makeText(UserPageActivity.this, "User updated successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    // Server returned an error
+                    Toast.makeText(UserPageActivity.this, "Update failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Network or conversion error
+                Toast.makeText(UserPageActivity.this, "Request failed: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }));
+    }
     void newPill(View view)
     {
+        Pill p = new Pill();
         View view1 = LayoutInflater.from(UserPageActivity.this).inflate(R.layout.newpill_dialog,null);
         TextInputEditText nameinp = view1.findViewById(R.id.pillname_input);
+        Spinner dosagesp = view1.findViewById(R.id.dosage_select);
+        TextInputEditText countinp = view1.findViewById(R.id.pillcount_input);
+
         AlertDialog al1 = new MaterialAlertDialogBuilder(UserPageActivity.this)
                 .setTitle("Enter new Pill Name")
                 .setView(view1)
@@ -155,19 +164,58 @@ public class UserPageActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String name = nameinp.getText().toString();
+                        Integer dosage = dosagesp.getSelectedItemPosition();
+                        Integer count = Integer.parseInt(countinp.getText().toString());
                         Log.d("dialog", name);
 
-                        Pill p = new Pill();
-                        p.name = name;
-                        List<Integer> vals = Arrays.asList(0,0);
-                        List<Integer> timings = new ArrayList<>();
-                        p.timings = timings;
-                        p.count = vals.get(0);
-                        p.dosage = vals.get(1);
-                        pill_display.add(p);
+                        //check if containers are available
+                        UserAPI api = RetrofitClient.getUserAPI();
+                        Call<List<Integer>> call = api.getEmptyContainers();
+                        boolean success = false;
 
-                        pilladapter.notifyDataSetChanged();
-                        dialog.dismiss();
+                        call.enqueue(new Callback<List<Integer>>() {
+                            @Override
+                            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                                if(response.isSuccessful() && response.body() != null)
+                                {
+                                    empty_containers = response.body();
+                                    Log.d("containerdata", "Received: " + empty_containers);
+                                    if (empty_containers == null)
+                                    {
+                                        Log.d("containerdata", "container request failed");
+                                    }
+                                    else if (empty_containers.size() > 0) {
+                                        //add new pill
+                                        p.name = name;
+                                        List<Integer> vals = Arrays.asList(count,dosage,empty_containers.get(0));
+                                        List<Integer> timings = new ArrayList<>();
+                                        p.timings = timings;
+                                        p.count = vals.get(0);
+                                        p.dosage = vals.get(1);
+                                        p.containerid = vals.get(2);
+                                        pill_display.add(p);
+                                        Log.d("containerdata", "new pill added");
+
+                                        pilladapter.notifyDataSetChanged();
+                                        dialog.dismiss();
+                                    }
+                                    else
+                                    {
+                                        //all containers are used
+                                        Log.d("containerdata", Integer.toString(empty_containers.size()));
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<Integer>> call, Throwable t) {
+                                empty_containers = null;
+                                Toast.makeText(UserPageActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                                Log.e("containerdata","Failed: " + t.getMessage());
+                            }
+                        });
+
+
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -221,5 +269,30 @@ public class UserPageActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    void get_empty_containers()
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+        Call<List<Integer>> call = api.getEmptyContainers();
+        boolean success = false;
+
+        call.enqueue(new Callback<List<Integer>>() {
+            @Override
+            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                if(response.isSuccessful() && response.body() != null)
+                {
+                    empty_containers = response.body();
+                    Log.d("containerdata", "Received: " + empty_containers);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Integer>> call, Throwable t) {
+                empty_containers = null;
+                Toast.makeText(UserPageActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("containerdata","Failed: " + t.getMessage());
+            }
+        });
     }
 }

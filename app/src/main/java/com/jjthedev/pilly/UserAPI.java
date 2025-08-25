@@ -16,6 +16,9 @@ public interface UserAPI {
     @GET("userlist")
     Call<Map<Integer,String>> getUserList(); // Returns a list of user IDs
 
+    @GET("empty_containers")
+    Call<List<Integer>> getEmptyContainers(); // Returns a list of user IDs
+
     @GET("users/{id}")
     Call<User> getUser(@Path("id") String id); // Returns a single user
 
@@ -27,6 +30,9 @@ public interface UserAPI {
 
     @POST("adduser")
     Call<Void> newUser(@Body User user);
+
+    @POST("user/{id}/edit_pill/{pill}")
+    Call<Void> editPill();
     //@PUT("adduser")
     //Call<Void> newUser()
 }
