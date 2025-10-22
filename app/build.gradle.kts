@@ -47,4 +47,7 @@ dependencies {
 
     // Optional: for logging HTTP requests (very useful!)
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    implementation("org.jmdns:jmdns:3.6.0")
+
 }

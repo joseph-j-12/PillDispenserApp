@@ -163,58 +163,56 @@ public class UserPageActivity extends AppCompatActivity {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String name = nameinp.getText().toString();
-                        Integer dosage = dosagesp.getSelectedItemPosition();
-                        Integer count = Integer.parseInt(countinp.getText().toString());
-                        Log.d("dialog", name);
+                        try {
+                            String name = nameinp.getText().toString();
+                            Integer dosage = dosagesp.getSelectedItemPosition();
+                            Integer count = Integer.parseInt(countinp.getText().toString());
+                            Log.d("dialog", name);
 
-                        //check if containers are available
-                        UserAPI api = RetrofitClient.getUserAPI();
-                        Call<List<Integer>> call = api.getEmptyContainers();
-                        boolean success = false;
+                            //check if containers are available
+                            UserAPI api = RetrofitClient.getUserAPI();
+                            Call<List<Integer>> call = api.getEmptyContainers();
+                            boolean success = false;
 
-                        call.enqueue(new Callback<List<Integer>>() {
-                            @Override
-                            public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
-                                if(response.isSuccessful() && response.body() != null)
-                                {
-                                    empty_containers = response.body();
-                                    Log.d("containerdata", "Received: " + empty_containers);
-                                    if (empty_containers == null)
-                                    {
-                                        Log.d("containerdata", "container request failed");
-                                    }
-                                    else if (empty_containers.size() > 0) {
-                                        //add new pill
-                                        p.name = name;
-                                        List<Integer> vals = Arrays.asList(count,dosage,empty_containers.get(0));
-                                        List<Integer> timings = new ArrayList<>();
-                                        p.timings = timings;
-                                        p.count = vals.get(0);
-                                        p.dosage = vals.get(1);
-                                        p.containerid = vals.get(2);
-                                        pill_display.add(p);
-                                        Log.d("containerdata", "new pill added");
+                            call.enqueue(new Callback<List<Integer>>() {
+                                @Override
+                                public void onResponse(Call<List<Integer>> call, Response<List<Integer>> response) {
+                                    if (response.isSuccessful() && response.body() != null) {
+                                        empty_containers = response.body();
+                                        Log.d("containerdata", "Received: " + empty_containers);
+                                        if (empty_containers == null) {
+                                            Log.d("containerdata", "container request failed");
+                                        } else if (empty_containers.size() > 0) {
+                                            //add new pill
+                                            p.name = name;
+                                            List<Integer> vals = Arrays.asList(count, dosage, empty_containers.get(0));
+                                            List<Integer> timings = new ArrayList<>();
+                                            p.timings = timings;
+                                            p.count = vals.get(0);
+                                            p.dosage = vals.get(1);
+                                            p.containerid = vals.get(2);
+                                            pill_display.add(p);
+                                            Log.d("containerdata", "new pill added");
 
-                                        pilladapter.notifyDataSetChanged();
-                                        dialog.dismiss();
-                                    }
-                                    else
-                                    {
-                                        //all containers are used
-                                        Log.d("containerdata", Integer.toString(empty_containers.size()));
+                                            pilladapter.notifyDataSetChanged();
+                                            dialog.dismiss();
+                                        } else {
+                                            //all containers are used
+                                            Log.d("containerdata", Integer.toString(empty_containers.size()));
+                                        }
                                     }
                                 }
-                            }
 
-                            @Override
-                            public void onFailure(Call<List<Integer>> call, Throwable t) {
-                                empty_containers = null;
-                                Toast.makeText(UserPageActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
-                                Log.e("containerdata","Failed: " + t.getMessage());
-                            }
-                        });
+                                @Override
+                                public void onFailure(Call<List<Integer>> call, Throwable t) {
+                                    empty_containers = null;
+                                    Toast.makeText(UserPageActivity.this, "Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                                    Log.e("containerdata", "Failed: " + t.getMessage());
+                                }
+                            });
+                        } catch (Exception e) {
 
+                        }
 
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
