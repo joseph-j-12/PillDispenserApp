@@ -169,7 +169,6 @@ public class UserPageActivity extends AppCompatActivity {
                             Integer count = Integer.parseInt(countinp.getText().toString());
                             Log.d("dialog", name);
 
-                            //check if containers are available
                             UserAPI api = RetrofitClient.getUserAPI();
                             Call<List<Integer>> call = api.getEmptyContainers();
                             boolean success = false;
@@ -180,6 +179,9 @@ public class UserPageActivity extends AppCompatActivity {
                                     if (response.isSuccessful() && response.body() != null) {
                                         empty_containers = response.body();
                                         Log.d("containerdata", "Received: " + empty_containers);
+
+                                        //check if containers are available
+
                                         if (empty_containers == null) {
                                             Log.d("containerdata", "container request failed");
                                         } else if (empty_containers.size() > 0) {
@@ -199,6 +201,11 @@ public class UserPageActivity extends AppCompatActivity {
                                         } else {
                                             //all containers are used
                                             Log.d("containerdata", Integer.toString(empty_containers.size()));
+                                            new MaterialAlertDialogBuilder(UserPageActivity.this)
+                                                    .setTitle("No Unused Containers")
+                                                    .setMessage("All containers are currently in use. Please free one before adding a new pill.")
+                                                    .setPositiveButton("OK", (d, w) -> d.dismiss())
+                                                    .show();
                                         }
                                     }
                                 }

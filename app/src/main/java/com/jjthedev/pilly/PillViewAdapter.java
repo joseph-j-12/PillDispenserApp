@@ -39,6 +39,8 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
         //TextView idtxt;
         ImageButton delButton;
         ImageButton addTimeButton;
+
+        ImageButton edit_pill_button;
         RecyclerView timings;
 
         ImageButton editPill;
@@ -57,6 +59,7 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
             addTimeButton = view.findViewById(R.id.addTime);
             //idtxt = view.findViewById(R.id.idText);
             dosages = view.getResources().getStringArray(R.array.dosages);
+            edit_pill_button = view.findViewById(R.id.edit_pill);
             //dosage_spinner = view.findViewById(R.id.dosage_select_spinner);
 
         }
@@ -80,7 +83,9 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
         holder.addTimeButton.setOnClickListener(v->{
             newTimingDialog(this.context, holder);
         });
-
+        holder.edit_pill_button.setOnClickListener(v->{
+            editPillDialog(this.context, holder, pill);
+        });
         holder.time_display = pill.timings;
 
         holder.timeadapter = new TimeViewAdapter(this.context, holder.time_display);
@@ -94,9 +99,58 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
 
     }
 
+    void editPillDialog(Context context, PillViewHolder holder, Pill p)
+    {
+        View view1 = LayoutInflater.from(context).inflate(R.layout.newpill_dialog, null);
+
+        TextInputEditText nameinp = view1.findViewById(R.id.pillname_input);
+        Spinner dosagesp = view1.findViewById(R.id.dosage_select);
+        TextInputEditText countinp = view1.findViewById(R.id.pillcount_input);
+
+        // Pre-fill with current pill data
+        nameinp.setText(p.name);
+        dosagesp.setSelection(p.dosage); // assuming dosage is spinner index
+        countinp.setText(String.valueOf(p.count));
+
+        AlertDialog al1 = new MaterialAlertDialogBuilder(context)
+                .setTitle("Edit Pill")
+                .setView(view1)
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            String name = nameinp.getText().toString().trim();
+                            int dosage = dosagesp.getSelectedItemPosition();
+                            int count = Integer.parseInt(countinp.getText().toString().trim());
+
+                            // Update pill
+                            p.name = name;
+                            p.dosage = dosage;
+                            p.count = count;
+
+
+                            notifyDataSetChanged();
+
+
+                            Toast.makeText(context, "Pill updated", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(context, "Error updating pill: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.e("editPill", "Exception: ", e);
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+
+        al1.show();
+    }
     void newTimingDialog(Context context, PillViewHolder holder)
     {
-        Pill p = new Pill();
         View view1 = LayoutInflater.from(context).inflate(R.layout.new_timing_dialog,null);
         TextInputEditText hourInp = view1.findViewById(R.id.hour_input);
         TextInputEditText minInp = view1.findViewById(R.id.minute_input);
