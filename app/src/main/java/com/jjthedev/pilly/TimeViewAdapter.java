@@ -53,6 +53,10 @@ public class TimeViewAdapter extends RecyclerView.Adapter<TimeViewAdapter.TimeVi
         holder.hour.setText(hour);
         holder.min.setText(min);
 
+        holder.itemView.setOnClickListener(v->{
+            timings.remove(position);
+            notifyDataSetChanged();
+        });
 
         Log.d("TimeViewAdapter", time.toString());
 //        holder.nametxt.setText(pill.name);

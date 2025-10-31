@@ -25,6 +25,13 @@ public interface UserAPI {
     @PUT("users/{id}")
     Call<Void> updateUser(@Path("id") String id, @Body User user); // Updates user data
 
+    //containers
+    @PUT("containers/{id}/open")
+    Call<Void> openContainer(@Path("id") String id); // Updates user data
+
+    @PUT("containers/close")
+    Call<Void> closeContainer(); // Updates user data
+
     @DELETE("users/{id}")
     Call<Void> deleteUser(@Path("id") String id);
 
@@ -33,6 +40,9 @@ public interface UserAPI {
 
     @POST("user/{id}/edit_pill/{pill}")
     Call<Void> editPill();
+
+    @PUT("users/{id}/save_face")
+    Call<Void> saveFace(@Path("id") String id);
     //@PUT("adduser")
     //Call<Void> newUser()
 }

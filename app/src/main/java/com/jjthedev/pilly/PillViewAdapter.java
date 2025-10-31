@@ -111,7 +111,7 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
         nameinp.setText(p.name);
         dosagesp.setSelection(p.dosage); // assuming dosage is spinner index
         countinp.setText(String.valueOf(p.count));
-
+        openContainer(p.containerid);
         AlertDialog al1 = new MaterialAlertDialogBuilder(context)
                 .setTitle("Edit Pill")
                 .setView(view1)
@@ -119,6 +119,7 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         try {
+                            closeContainer();
                             String name = nameinp.getText().toString().trim();
                             int dosage = dosagesp.getSelectedItemPosition();
                             int count = Integer.parseInt(countinp.getText().toString().trim());
@@ -142,12 +143,72 @@ public class PillViewAdapter extends RecyclerView.Adapter<PillViewAdapter.PillVi
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //closeContainer();
                         dialog.dismiss();
+                    }
+                })
+                .setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        // This is the single, clean spot to handle any cleanup,
+                        // including external clicks, back press, or button dismissals.
+                        closeContainer();
+                        Log.d("Dialog", "Dialog dismissed. Container closed.");
                     }
                 })
                 .create();
 
         al1.show();
+    }
+
+    void openContainer(int cont_id)
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+
+        Call<Void> call = api.openContainer(Integer.toString(cont_id));  // userId is a String or int
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //Log.d("UserAPI", "User deleted successfully");
+
+                    // You can finish activity or refresh UI
+                } else {
+                    //Log.e("UserAPI", "Delete failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("UserAPI", "open container failed " + t.getMessage());
+            }
+        });
+    }
+
+    void closeContainer()
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+
+        Call<Void> call = api.closeContainer();  // userId is a String or int
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //Log.d("UserAPI", "User deleted successfully");
+
+                    // You can finish activity or refresh UI
+                } else {
+                    //Log.e("UserAPI", "Delete failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("UserAPI", "close container failed: " + t.getMessage());
+            }
+        });
     }
     void newTimingDialog(Context context, PillViewHolder holder)
     {

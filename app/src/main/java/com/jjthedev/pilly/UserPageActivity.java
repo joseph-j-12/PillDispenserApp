@@ -51,6 +51,7 @@ public class UserPageActivity extends AppCompatActivity {
 
     Button deleteUser;
     ImageButton saveUser, canceledit;
+    ImageButton camera;
     User userdata;
     ImageButton newPill;
     List<Integer> empty_containers = new ArrayList<>();
@@ -62,6 +63,7 @@ public class UserPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String userId = intent.getStringExtra("userid");
         Log.d("UserData", userId);
+        userid = Integer.parseInt(userId);
         Log.d("UserData", "1AAAAAAAAAAAAAAA");
         setContentView(R.layout.activity_user_page);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -76,6 +78,8 @@ public class UserPageActivity extends AppCompatActivity {
         canceledit = findViewById(R.id.userpage_cancel);
         saveUser = findViewById(R.id.userpage_save);
         newPill = findViewById(R.id.userpage_newpill);
+        camera = findViewById(R.id.camera);
+
         Log.d("UserData", "2AAAAAAAAAAAAAAA");
         if (saveUser == null)
         {
@@ -101,6 +105,8 @@ public class UserPageActivity extends AppCompatActivity {
                 newPill(view);
             }
         });
+
+        camera.setOnClickListener(v->openCameraDialog());
 
     }
 
@@ -229,6 +235,63 @@ public class UserPageActivity extends AppCompatActivity {
                     }
                 }).create();
         al1.show();
+    }
+
+    private void openCameraDialog() {
+        // 1. Instantiate the MaterialAlertDialogBuilder
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+
+        // 2. Set the Title and Message
+        builder.setTitle("Register Face");
+        builder.setMessage("Clock Yes to register your face. If the face data already exists, it will overwrite it");
+
+        // 3. Set the Positive Button and its OnClickListener
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Your existing logic remains the same
+                //Toast.makeText(getApplicationContext(), userid.toString(), Toast.LENGTH_SHORT).show();
+                openCamera(userid);
+                //Toast.makeText(getApplicationContext(), "You clicked Yes", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // 4. Set the Negative Button and its OnClickListener
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Your existing logic remains the same
+                //Toast.makeText(getApplicationContext(), "You clicked No", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // 5. Create and Show the Dialog (or just use builder.show() directly)
+        // MaterialAlertDialogBuilder inherits all the standard methods.
+        builder.show();
+    }
+    void openCamera(int userid)
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+
+        Call<Void> call = api.saveFace(Integer.toString(userid));  // userId is a String or int
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //Log.d("UserAPI", "User deleted successfully");
+
+                    // You can finish activity or refresh UI
+                } else {
+                    //Log.e("UserAPI", "Delete failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("UserAPI", "save face failed" + t.getMessage());
+            }
+        });
     }
     void fetchUserData(String id)
     {
