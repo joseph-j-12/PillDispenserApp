@@ -43,6 +43,12 @@ public interface UserAPI {
 
     @PUT("users/{id}/save_face")
     Call<Void> saveFace(@Path("id") String id);
+
+    @GET("ringtone")
+    Call<List<String>> getRingtones();
+
+    @POST("ringtone/set")
+    Call<Void> setRingtone(@Body String filename);
     //@PUT("adduser")
     //Call<Void> newUser()
 }

@@ -20,6 +20,17 @@
         app:layout_constraintEnd_toStartOf="@+id/button_newUser"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageButton
+        android:id="@+id/button_ringtone"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        android:layout_marginTop="60dp"
+        android:layout_marginEnd="28dp"
+        android:background="@drawable/ringtone"
+        android:backgroundTint="@null"
+        app:layout_constraintEnd_toStartOf="@+id/button_refresh_userlist"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/textView_connectedto"
         android:layout_width="wrap_content"

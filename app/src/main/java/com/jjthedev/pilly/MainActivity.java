@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         TextView statusView = findViewById(R.id.textView_connectedto);
         ImageButton refButton = findViewById(R.id.button_refresh_userlist);
         ImageButton newUserButton = findViewById(R.id.button_newUser);
+        ImageButton ringtoneSelect = findViewById(R.id.button_ringtone);
+
         RecyclerView userlistview = findViewById(R.id.recycler_userlist);
 
         userlistview.setLayoutManager(new LinearLayoutManager(this));
@@ -111,8 +113,111 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ringtoneSelect.setOnClickListener(v->ringtoneSelect());
+
     }
 
+    void ringtoneSelect()
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+        Call<List<String>> call = api.getRingtones();
+        List<String> ringtoneList;
+        call.enqueue(new Callback<List<String>>() {
+
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    // **SUCCESS! The raw list of strings is here:**
+                    List<String> rawRingtones = response.body();
+
+                    // --- Use the Raw List Directly ---
+
+                    // Example 1: Print all the raw strings to the log
+                    for (String ringtoneUrl : rawRingtones) {
+                        Log.d("RingtoneFetch", "Raw URL: " + ringtoneUrl);
+                    }
+                    ringtoneSelectDialog(rawRingtones);
+                    // Example 2: Check the size
+                    //Log.i("RingtoneFetch", "Total Ringtones fetched: " + rawRingtones.size());
+
+                    // Example 3: Use the list to populate a simple ArrayAdapter/ListView
+                    // if (rawRingtones.size() > 0) {
+                    //     Toast.makeText(MainActivity.this, "First Ringtone: " + rawRingtones.get(0), Toast.LENGTH_LONG).show();
+                    // }
+
+                } else {
+                    // Handle non-200 HTTP codes (e.g., 404, 500)
+                    Log.e("RingtoneFetch", "API Call Failed with code: " + response.code());
+                    Toast.makeText(MainActivity.this, "Server Error: " + response.code(), Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                // Handle network failure (e.g., connection lost)
+                Log.e("RingtoneFetch", "Network Failed: " + t.getMessage());
+                Toast.makeText(MainActivity.this, "Network Failed: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    void ringtoneSelectDialog(List<String> ringtoneList)
+    {
+        final String[] options = ringtoneList.toArray(new String[0]);
+
+        // 2. Build the Material Dialog
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle("Select a Ringtone")
+
+                // 3. Set the items and the click listener
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // 'which' is the index (0, 1, 2, ...) of the selected item
+                        String selectedRingtone = options[which];
+                        setRingtone(selectedRingtone);
+                        // --- Selection Logic ---
+                        // This is where you use the user's selection
+                        Toast.makeText(
+                                MainActivity.this,
+                                "Selected Ringtone: " + selectedRingtone,
+                                Toast.LENGTH_LONG
+                        ).show();
+
+                        // The dialog is automatically dismissed after this block executes.
+                    }
+                })
+                // 4. Show the dialog
+                .show();
+    }
+
+    void setRingtone(String filename)
+    {
+        UserAPI api = RetrofitClient.getUserAPI();
+
+        Call<Void> call = api.setRingtone(filename);  // userId is a String or int
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    //Log.d("UserAPI", "User deleted successfully");
+
+                    // You can finish activity or refresh UI
+                } else {
+                    //Log.e("UserAPI", "Delete failed with code: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.e("UserAPI", "open container failed " + t.getMessage());
+            }
+        });
+    }
     private void newUserCreate(User user)
     {
         UserAPI api = RetrofitClient.getUserAPI();
