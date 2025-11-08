@@ -243,7 +243,7 @@ public class UserPageActivity extends AppCompatActivity {
 
         // 2. Set the Title and Message
         builder.setTitle("Register Face");
-        builder.setMessage("Clock Yes to register your face. If the face data already exists, it will overwrite it");
+        builder.setMessage("Click Yes to register your face. If the face data already exists, it will overwrite it");
 
         // 3. Set the Positive Button and its OnClickListener
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
