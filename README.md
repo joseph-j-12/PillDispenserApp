@@ -20,7 +20,7 @@ This repo is for the android app written in java.
 -Multiple medicines for one user and custom timings per medicine
 
 
-App Repo : https://github.com/joseph-j-12/PillDispenserApp
+Hardware Repo : https://github.com/joseph-j-12/PillDispenser/
 
 -
 
